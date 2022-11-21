@@ -88,19 +88,12 @@ export async function listTokensOfOwner({ token: tokenAddress, account, signer }
 
   console.warn(await token.name(), 'tokens owned by', account);
 
-  const sentLogs = await token.queryFilter(
-    token.filters.Transfer(account, null),
-  );
-  const receivedLogs = await token.queryFilter(
-    token.filters.Transfer(null, account),
-  );
+  const sentLogs = await token.queryFilter(token.filters.Transfer(account, null));
+  const receivedLogs = await token.queryFilter(token.filters.Transfer(null, account));
 
-  const logs = sentLogs.concat(receivedLogs)
-    .sort(
-      (a, b) =>
-        a.blockNumber - b.blockNumber ||
-        a.transactionIndex - b.transactionIndex,
-    );
+  const logs = sentLogs
+    .concat(receivedLogs)
+    .sort((a, b) => a.blockNumber - b.blockNumber || a.transactionIndex - b.transactionIndex);
 
   const owned = new Set();
 
@@ -114,8 +107,8 @@ export async function listTokensOfOwner({ token: tokenAddress, account, signer }
     }
   }
 
-  return [...owned] as [string]
-};
+  return [...owned] as [string];
+}
 
 function addressEqual(a: string, b: string) {
   return a.toLowerCase() === b.toLowerCase();

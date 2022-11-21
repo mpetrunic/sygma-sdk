@@ -110,13 +110,13 @@ describe('chainbridge-sdk', () => {
       to: 'chain2',
     });
 
-    expect(calculateFeeData).toHaveBeenCalled()
+    expect(calculateFeeData).toHaveBeenCalled();
 
-    spy.mockRestore()
+    spy.mockRestore();
   });
 
   it('Should call fetchBasicFeeData function if type of feeSettings is basic', async () => {
-    (calculateBasicfee as jest.Mock).mockImplementation(() => Promise.resolve('0x174876e800'))
+    (calculateBasicfee as jest.Mock).mockImplementation(() => Promise.resolve('0x174876e800'));
 
     const spy = jest.spyOn(Chainbridge.prototype, 'fetchFeeData');
 
@@ -139,7 +139,6 @@ describe('chainbridge-sdk', () => {
       to: 'chain2',
     });
 
-
     expect(spy).toHaveBeenCalledWith({
       amount: '100',
       recipientAddress: '0xF4314cb9046bECe6AA54bb9533155434d0c76909',
@@ -147,15 +146,14 @@ describe('chainbridge-sdk', () => {
       to: 'chain2',
     });
 
-    expect(calculateBasicfee).toHaveBeenCalled()
-    spy.mockRestore()
-  })
+    expect(calculateBasicfee).toHaveBeenCalled();
+    spy.mockRestore();
+  });
 
   it('Should trigger console.warn and return void if feeSetting is none', async () => {
-    const spy = jest.spyOn(console, 'warn')
+    const spy = jest.spyOn(console, 'warn');
 
-    const spy2 = jest.spyOn(Chainbridge.prototype, 'fetchFeeData')
-
+    const spy2 = jest.spyOn(Chainbridge.prototype, 'fetchFeeData');
 
     const bSetup = bridgeSetup;
 
@@ -176,8 +174,8 @@ describe('chainbridge-sdk', () => {
       to: 'chain2',
     });
 
-    expect(spy).toHaveBeenCalledWith('No fee settings provided')
-    expect(spy2).toHaveBeenCalled()
-    expect(res).toBe(undefined)
-  })
+    expect(spy).toHaveBeenCalledWith('No fee settings provided');
+    expect(spy2).toHaveBeenCalled();
+    expect(res).toBe(undefined);
+  });
 });

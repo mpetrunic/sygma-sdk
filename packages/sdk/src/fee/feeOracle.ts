@@ -1,6 +1,4 @@
-import {
-  FeeHandlerWithOracle__factory,
-} from '@buildwithsygma/sygma-contracts';
+import { FeeHandlerWithOracle__factory } from '@buildwithsygma/sygma-contracts';
 import { utils, BigNumber, ethers } from 'ethers';
 import fetch from 'node-fetch';
 import EthCrypto from 'eth-crypto';
@@ -14,7 +12,7 @@ export const createOracleFeeData = (
   tokenResource: any,
   oraclePrivateKey?: string,
 ) => {
-    /*
+  /*
         feeData structure:
             ber*10^18: uint256
             ter*10^18: uint256
@@ -43,19 +41,18 @@ export const createOracleFeeData = (
     toHex(oracleResponse.expirationTimestamp, 32).substr(2) + // timestamp: uint256
     toHex(oracleResponse.fromDomainID, 32).substr(2) + // fromDomainID: uint256
     toHex(oracleResponse.toDomainID, 32).substr(2) + // toDomainID: uint256
-    (oracleResponse.resourceID).substr(2); // resourceID: bytes32
+    oracleResponse.resourceID.substr(2); // resourceID: bytes32
 
-    let signature
-    if (oraclePrivateKey) {
-      // temprorary signature generated with sign by private key
-      const messageHash = EthCrypto.hash.keccak256([{ type: 'bytes', value: oracleMessage }]);
-      signature = EthCrypto.sign(oraclePrivateKey, messageHash);
-      return oracleMessage + signature.substr(2) + toHex(amount, 32).substr(2);
-
-    } else {
-      signature = oracleResponse.signature;
-      return oracleMessage + signature + toHex(0, 32).substr(2);
-    }
+  let signature;
+  if (oraclePrivateKey) {
+    // temprorary signature generated with sign by private key
+    const messageHash = EthCrypto.hash.keccak256([{ type: 'bytes', value: oracleMessage }]);
+    signature = EthCrypto.sign(oraclePrivateKey, messageHash);
+    return oracleMessage + signature.substr(2) + toHex(amount, 32).substr(2);
+  } else {
+    signature = oracleResponse.signature;
+    return oracleMessage + signature + toHex(0, 32).substr(2);
+  }
 };
 
 export const calculateFeeData = async ({
@@ -118,7 +115,7 @@ export const calculateFeeData = async ({
     calculatedRate: ethers.utils.formatEther(res.fee.toString()),
     erc20TokenAddress: res.tokenAddress,
     feeData,
-    type: 'feeOracle'
+    type: 'feeOracle',
   };
   console.log('⛓️ ~ formatted result of feeHandler', result);
   return result;
@@ -140,12 +137,12 @@ export const requestFeeFromFeeOracle = async ({
       `${feeOracleBaseUrl}/v1/rate/from/${fromDomainID}/to/${toDomainID}/resourceid/${resourceID}`,
       {
         headers: {
-          'Cache-Control': 'no-cache'
-        }
-      }
+          'Cache-Control': 'no-cache',
+        },
+      },
     );
     if (response.status !== 200) {
-      throw(new Error(response.statusText));
+      throw new Error(response.statusText);
     }
     const data = await response.json();
     if (data.error) {
@@ -155,6 +152,6 @@ export const requestFeeFromFeeOracle = async ({
       return data.response as OracleResource;
     }
   } catch (e) {
-    return Promise.reject(new Error("Invalid fee oracle response"))
+    return Promise.reject(new Error('Invalid fee oracle response'));
   }
 };
